@@ -1,0 +1,32 @@
+{% extends 'base.html' %} 
+
+{% block body %}
+<textarea id="chat-log" cols="100" rows="20"></textarea><br />
+<form id="chat-message-form">
+  <input id="chat-message-input" type="text" size="100" /><br />
+  <input type="submit" value="보내기" />
+</form>
+<script>
+  const roomName = '{{ room_name }}'
+  const chatSocket = new WebSocket(`ws://${window.location.host}/ws/chat/${roomName}/`)
+  const chatLog = document.querySelector('#chat-log')
+  const chatMessageForm = document.querySelector('#chat-message-form')
+  const chatMessageInput = document.querySelector('#chat-message-input')
+
+  chatSocket.onmessage = (event)=>{
+    const {message} = JSON.parse(event.data)
+    chatLog.value += `${message}\n` 
+  }
+  chatSocket.onclose = (error)=>{
+    console.error('chat socket closed!', error)
+  }
+  chatMessageForm.addEventListener('submit', event=>{
+    event.preventDefault()
+    const message = chatMessageInput.value
+    chatSocket.send(JSON.stringify({
+      message,
+    }))
+    chatMessageInput.value = ''
+  })
+</script>
+{% endblock body %}
