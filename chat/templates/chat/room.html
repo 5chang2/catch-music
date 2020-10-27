@@ -12,10 +12,18 @@
   const chatLog = document.querySelector('#chat-log')
   const chatMessageForm = document.querySelector('#chat-message-form')
   const chatMessageInput = document.querySelector('#chat-message-input')
+  const me = Date.now() % 2 ? 'bing' : 'change'
+  chatSocket.onopen = ()=>{
+    chatSocket.send(JSON.stringify({
+      action:'enter',
+      username:me,
+    }))
+  }
 
   chatSocket.onmessage = (event)=>{
-    const {message} = JSON.parse(event.data)
-    chatLog.value += `${message}\n` 
+    console.log(event.data)
+    // const {message} = JSON.parse(event.data)
+    // chatLog.value += `${message}\n` 
   }
   chatSocket.onclose = (error)=>{
     console.error('chat socket closed!', error)
