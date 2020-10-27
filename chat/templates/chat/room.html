@@ -32,7 +32,9 @@
     event.preventDefault()
     const message = chatMessageInput.value
     chatSocket.send(JSON.stringify({
+      action:'message',
       message,
+      username:me,
     }))
     chatMessageInput.value = ''
   })

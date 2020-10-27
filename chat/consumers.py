@@ -44,7 +44,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 self.room_group_name,
                 {
                     'type': 'chat.message',
-                    'message': message
+                    'message': message,
+                    'username': username,
                 }
             )
         elif action == 'start':
@@ -54,10 +55,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
     
     async def chat_message(self, event):
         message = event['message']
+        username = event['username']
 
         # WebSocket 에게 메세지 전송
         await self.send(text_data=json.dumps({
-            'message': message
+            'action': 'message',
+            'message': message,
+            'author': username,
         }))
     
     @database_sync_to_async
