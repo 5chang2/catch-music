@@ -51,15 +51,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 }
             )
         elif action == 'music':
-            if self.user.is_host:
-                music = await self.get_random_music()
-                await self.channel_layer.group_send(
-                    self.room_group_name,
-                    {
-                        'type': 'chat.music',
-                        'music': music,
-                    }
-                )
+            music = await self.get_random_music()
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'chat.music',
+                    'music': music,
+                }
+            )
         else:
             pass
     
