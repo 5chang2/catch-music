@@ -1,6 +1,8 @@
+from django.forms.models import model_to_dict
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .models import Room, User
+from musics.models import Music
 import json
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -48,8 +50,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'username': username,
                 }
             )
-        elif action == 'start':
-            pass
+        elif action == 'music':
+            if self.user.is_host:
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'chat.music',
+                    }
+                )
         else:
             pass
     
@@ -63,6 +71,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'message': message,
             'author': username,
         }))
+
+    async def chat_music(self, event):
+        music = await self.get_random_music()
+        await self.send(text_data=json.dumps({
+            'action': 'music',
+            'music': music,
+        }))
+
     
     @database_sync_to_async
     def get_room_or_create(self, room_name):
@@ -94,3 +110,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
     def delete_user(self, user_id):
         user = User.objects.get(pk=user_id)
         user.delete()
+    
+    @database_sync_to_async
+    def get_random_music(self):
+        music = Music.objects.order_by('?').first()
+        return model_to_dict(music)
