@@ -1,0 +1,47 @@
+[
+    {
+        "model": "musics.music",
+        "pk": 1,
+        "fields": {
+            "singer": "����Ŀ����Ŀ",
+            "title": "���ɿ���",
+            "youtube_url": "MzF5bWjKjjI"
+        }
+    },
+    {
+        "model": "musics.music",
+        "pk": 2,
+        "fields": {
+            "singer": "�����",
+            "title": "�ǹ����׿�",
+            "youtube_url": "BfWqUjunXXU"
+        }
+    },
+    {
+        "model": "musics.music",
+        "pk": 10,
+        "fields": {
+            "singer": "�����̰�",
+            "title": "dolphin",
+            "youtube_url": "4JJFrjkRxmo"
+        }
+    },
+    {
+        "model": "musics.music",
+        "pk": 11,
+        "fields": {
+            "singer": "BTS",
+            "title": "dynamite",
+            "youtube_url": "NvK9APEhcdk"
+        }
+    },
+    {
+        "model": "musics.music",
+        "pk": 12,
+        "fields": {
+            "singer": "���̾�Ƽ",
+            "title": "��ȭ�뱳",
+            "youtube_url": "uLUvHUzd4UA"
+        }
+    }
+]
