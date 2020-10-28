@@ -1,6 +1,4 @@
-{% extends 'base.html' %} 
-
-{% block body %}
+{% extends 'base.html' %} {% block body %}
 <button id="new-music">새로운 음악 재생</button>
 <textarea id="chat-log" cols="100" rows="20"></textarea><br />
 <form id="chat-message-form">
@@ -9,7 +7,9 @@
 </form>
 <script>
   const roomName = '{{ room_name }}'
-  const chatSocket = new WebSocket(`ws://${window.location.host}/ws/chat/${roomName}/`)
+  const chatSocket = new WebSocket(
+    `ws://${window.location.host}/ws/chat/${roomName}/`
+  )
   const chatLog = document.querySelector('#chat-log')
   const chatMessageForm = document.querySelector('#chat-message-form')
   const chatMessageInput = document.querySelector('#chat-message-input')
@@ -17,36 +17,54 @@
   const me = Date.now() % 2 ? 'bing' : 'change'
 
   // 새 음악 시작할 때
-  newMusicButton.addEventListener('click', ()=>{
-    chatSocket.send(JSON.stringify({
-      action:'music'
-    }))
+  newMusicButton.addEventListener('click', () => {
+    chatSocket.send(
+      JSON.stringify({
+        action: 'music',
+      })
+    )
   })
 
   // 방에 입장했을 때
-  chatSocket.onopen = ()=>{
-    chatSocket.send(JSON.stringify({
-      action:'enter',
-      username:me,
-    }))
+  chatSocket.onopen = () => {
+    chatSocket.send(
+      JSON.stringify({
+        action: 'enter',
+        username: me,
+      })
+    )
   }
 
   // message 받았을 때
-  chatSocket.onmessage = (event)=>{
+  chatSocket.onmessage = (event) => {
     console.log(event.data)
     // const {message} = JSON.parse(event.data)
-    // chatLog.value += `${message}\n` 
+    // chatLog.value += `${message}\n`
   }
-  
+
   // 메세지 보낼 때
-  chatMessageForm.addEventListener('submit', event=>{
+  chatMessageForm.addEventListener('submit', (event) => {
     event.preventDefault()
     const message = chatMessageInput.value
-    chatSocket.send(JSON.stringify({
-      action:'message',
-      message,
-      username:me,
-    }))
+    if (message === 'correct answer') {
+      chatSocket.send(
+        JSON.stringify({
+          action: 'solved',
+          user: {
+            id: 1,
+          },
+        })
+      )
+    } else {
+      chatSocket.send(
+        JSON.stringify({
+          action: 'message',
+          message,
+          username: me,
+        })
+      )
+    }
+
     chatMessageInput.value = ''
   })
 </script>

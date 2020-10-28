@@ -7,5 +7,6 @@ class Room(models.Model):
 
 class User(models.Model):
     is_host = models.BooleanField()
+    score = models.IntegerField(default=0)
     username = models.CharField(max_length=100)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)

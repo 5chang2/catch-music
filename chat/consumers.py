@@ -27,6 +27,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         action = text_data_json.get('action')
         username = text_data_json.get('username')
         message = text_data_json.get('message')
+        sender = text_data_json.get('user')
         if action == 'enter':
             room, user_count = await self.get_room_or_create(self.room_name)
             # room에 아무도 없다면
@@ -65,6 +66,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     'music': music,
                 }
             )
+        elif action == 'solved':
+            await self.update_user_score(sender.get('id'))
+            await self.channel_layer.group_send(
+                self.room_name,
+                {
+                    'type': 'chat.announce_winner',
+                    'winner': await self.get_user_dict(sender.get('id')),
+                    'userList': await self.get_user_list(self.room_name)
+                }
+            )
         else:
             pass
     
@@ -95,6 +106,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'action': 'music',
             'music': music,
+        }))
+    
+    async def chat_announce_winner(self, event):
+        winner = event['winner']
+        user_list = event['userList']
+        await self.send(text_data=json.dumps({
+            'action': 'solved',
+            'winner': winner,
+            'userList': user_list,
         }))
 
     
@@ -139,3 +159,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
     def get_random_music(self):
         music = Music.objects.order_by('?').first()
         return model_to_dict(music)
+    
+    @database_sync_to_async
+    def update_user_score(self, user_id):
+        user = User.objects.get(pk=user_id)
+        user.score += 1
+        user.save()
