@@ -9,9 +9,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
   	
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = self.room_name
         await self.channel_layer.group_add(
-            self.room_group_name,
+            self.room_name,
             self.channel_name
         )
         await self.accept()
@@ -19,7 +18,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         await self.delete_user(self.user.id)
         await self.channel_layer.group_discard(
-            self.room_group_name,
+            self.room_name,
             self.channel_name
         )
 	# 클라이언트로부터 메세지를 받을 시 실행
@@ -38,12 +37,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.user = user
             await self.send(text_data=json.dumps({
                 'action': 'enter',
+                'id': user.id,
                 'isHost': user.is_host,
                 'userList': await self.get_user_list(self.room_name),
             }))
+            await self.channel_layer.group_send(
+                self.room_name,
+                {
+                    'type': 'chat.new_user',
+                    'username': self.user.username,
+                }
+            )
         elif action == 'message':
             await self.channel_layer.group_send(
-                self.room_group_name,
+                self.room_name,
                 {
                     'type': 'chat.message',
                     'message': message,
@@ -53,7 +60,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         elif action == 'music':
             music = await self.get_random_music()
             await self.channel_layer.group_send(
-                self.room_group_name,
+                self.room_name,
                 {
                     'type': 'chat.music',
                     'music': music,
@@ -72,6 +79,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'message': message,
             'author': username,
         }))
+
+
+    async def chat_new_user(self, event):
+        username = event['username']
+        user_list = await self.get_user_list(self.room_name)
+        await self.send(text_data=json.dumps({
+            'action': 'newUser',
+            'username': username,
+            'userList': user_list,
+        }))
+
 
     async def chat_music(self, event):
         music = event['music']
