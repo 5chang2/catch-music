@@ -3,8 +3,8 @@
         "model": "musics.music",
         "pk": 1,
         "fields": {
-            "singer": "����Ŀ����Ŀ",
-            "title": "���ɿ���",
+            "singer": "버스커버스커",
+            "title": "벚꽃엔딩",
             "youtube_url": "MzF5bWjKjjI"
         }
     },
@@ -12,8 +12,8 @@
         "model": "musics.music",
         "pk": 2,
         "fields": {
-            "singer": "�����",
-            "title": "�ǹ����׿�",
+            "singer": "장범준",
+            "title": "실버판테온",
             "youtube_url": "BfWqUjunXXU"
         }
     },
@@ -21,7 +21,7 @@
         "model": "musics.music",
         "pk": 10,
         "fields": {
-            "singer": "�����̰�",
+            "singer": "오마이걸",
             "title": "dolphin",
             "youtube_url": "4JJFrjkRxmo"
         }
@@ -39,8 +39,8 @@
         "model": "musics.music",
         "pk": 12,
         "fields": {
-            "singer": "���̾�Ƽ",
-            "title": "��ȭ�뱳",
+            "singer": "자이언티",
+            "title": "양화대교",
             "youtube_url": "uLUvHUzd4UA"
         }
     }
