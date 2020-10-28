@@ -37,8 +37,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.user = user
             await self.send(text_data=json.dumps({
                 'action': 'enter',
-                'id': user.id,
-                'isHost': user.is_host,
+                'user': await self.get_user_dict(self.user.id),
                 'userList': await self.get_user_list(self.room_name),
             }))
             await self.channel_layer.group_send(
@@ -118,6 +117,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         user = User.objects.get(username=username)
         return user
     
+    @database_sync_to_async
+    def get_user_dict(self, id):
+        user = User.objects.filter(id=id).values()[0]
+        return user
+    
+
     @database_sync_to_async
     def get_user_list(self, room_name):
         room = Room.objects.get(room_name=room_name)
